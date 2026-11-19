@@ -1,0 +1,226 @@
+{
+ "tag": "ELTI",
+ "outcome_column": "ext__elti_cases",
+ "outcome_label_en": "Injured casualties aged 65 years or older in police-reported road traffic crashes, counted by district of crash occurrence (National Police Agency, via KOSIS e-local indicators DT_1YL202108), annual",
+ "disease_en": "Older-adult road traffic injury (place of occurrence)",
+ "disease_ko": "노인(65+) 교통사고 부상자(발생지)",
+ "forced": [
+  "ext__urban_population_share",
+  "ext__physicians_per_1000",
+  "ext__sex_ratio",
+  "ext__fiscal_independence",
+  "ext__pop80_share"
+ ],
+ "negative_controls": [
+  "ext__cpr_awareness_rate",
+  "ext__fires_per_10000",
+  "ext__ill_defined_share"
+ ],
+ "offset_E_column": "E_crude",
+ "offset_E_file": "ELTI_E69.csv",
+ "offset_E_label": "expected injured older adults = resident population aged 65+ (resident registration, DT_1YL20631) x national annual rate; sensitivity E = all police-reported crashes in the district x national ratio",
+ "graph": "593-edge contact graph, ST_GRAPH=04_분석/ELTI/graph_593.graph",
+ "population_override": [
+  {
+   "year": 2023,
+   "fbd_region": "경상남도창원시",
+   "population": 1009038,
+   "source": "KOSIS DT_1YL20651E 2023 통합창원시 계(유방암 11/4 population_final_audit)"
+  }
+ ],
+ "sensitivity_only_extra": [
+  "ext__living_alone_elderly",
+  "ext__all_crash_per1000",
+  "ext__em_specialists_per100k",
+  "ext__drink_drive_crash_share"
+ ],
+ "sets": {
+  "S1_narrative_full": [
+   "ext__cars_per_capita",
+   "ext__road_pavement_rate",
+   "ext__traffic_culture_index",
+   "ext__seatbelt_rate",
+   "ext__drink_driving_rate",
+   "ext__basic_livelihood_rate",
+   "ext__tertiary_educated_share"
+  ],
+  "S2_core": [
+   "ext__cars_per_capita",
+   "ext__traffic_culture_index",
+   "ext__basic_livelihood_rate"
+  ],
+  "S3_road_environment": [
+   "ext__cars_per_capita",
+   "ext__road_pavement_rate"
+  ],
+  "S4_road_user_behaviour": [
+   "ext__traffic_culture_index",
+   "ext__seatbelt_rate",
+   "ext__drink_driving_rate"
+  ],
+  "S5_socioeconomic": [
+   "ext__basic_livelihood_rate",
+   "ext__tertiary_educated_share"
+  ],
+  "S6_road_environment_behaviour": [
+   "ext__cars_per_capita",
+   "ext__road_pavement_rate",
+   "ext__traffic_culture_index",
+   "ext__seatbelt_rate",
+   "ext__drink_driving_rate"
+  ]
+ },
+ "transform": {
+  "ext__urban_population_share": "none",
+  "ext__physicians_per_1000": "none",
+  "ext__sex_ratio": "none",
+  "ext__fiscal_independence": "none",
+  "ext__pop80_share": "none",
+  "ext__cpr_awareness_rate": "none",
+  "ext__fires_per_10000": "none",
+  "ext__ill_defined_share": "none",
+  "ext__living_alone_elderly": "none",
+  "ext__all_crash_per1000": "none",
+  "ext__em_specialists_per100k": "none",
+  "ext__drink_drive_crash_share": "none",
+  "ext__cars_per_capita": "log",
+  "ext__road_pavement_rate": "none",
+  "ext__traffic_culture_index": "none",
+  "ext__seatbelt_rate": "none",
+  "ext__drink_driving_rate": "none",
+  "ext__basic_livelihood_rate": "none",
+  "ext__tertiary_educated_share": "none"
+ },
+ "expected_direction": {
+  "ext__cars_per_capita": "+",
+  "ext__road_pavement_rate": "±",
+  "ext__traffic_culture_index": "-",
+  "ext__seatbelt_rate": "-",
+  "ext__drink_driving_rate": "+",
+  "ext__basic_livelihood_rate": "+",
+  "ext__tertiary_educated_share": "-"
+ },
+ "evidence": {
+  "ext__cars_per_capita": "(문헌 단계 manifest에서 PMID 연결)",
+  "ext__road_pavement_rate": "(문헌 단계 manifest에서 PMID 연결)",
+  "ext__traffic_culture_index": "(문헌 단계 manifest에서 PMID 연결)",
+  "ext__seatbelt_rate": "(문헌 단계 manifest에서 PMID 연결)",
+  "ext__drink_driving_rate": "(문헌 단계 manifest에서 PMID 연결)",
+  "ext__basic_livelihood_rate": "(문헌 단계 manifest에서 PMID 연결)",
+  "ext__tertiary_educated_share": "(문헌 단계 manifest에서 PMID 연결)"
+ },
+ "rules": {
+  "likelihood": "forced-only 모형 WAIC 낮은 쪽(Poisson/NB)",
+  "set_choice": "WAIC 최소, 4 이내면 변수 적은 세트",
+  "credible": "95% CrI 1 제외",
+  "vif_drop": 10,
+  "multiverse_specs": 200,
+  "main_model_note": "Principal model = S1_narrative_full (7 district characteristics + 5 forced controls). VIF>10 retained and reported.",
+  "years": [
+   2011,
+   2024
+  ],
+  "windows": {
+   "W1_2011-15": [
+    2011,
+    2015
+   ],
+   "W2_2016-19": [
+    2016,
+    2019
+   ],
+   "W3_2020-24": [
+    2020,
+    2024
+   ]
+  },
+  "covid_post_from": 2020
+ },
+ "note": "Outcome: injured people aged 65+ in police-reported road traffic crashes, by district of crash occurrence (KOSIS DT_1YL202108). Expected counts: residents aged 65+ x national annual rate; sensitivity: all crashes in the district x national injured older people per crash. Covariates fixed before fitting: vehicle exposure and road environment (registered motor vehicles per resident, log; paved road share), road-user behaviour (traffic culture index; driver seat-belt wearing; drink-driving among drivers) and socioeconomic conditions (basic livelihood security recipients; tertiary education); five forced controls; negative control exposures CPR awareness, fires and ill-defined deaths.",
+ "extra_columns": {
+  "ext__urban_population_share": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "urban_population_share"
+  ],
+  "ext__physicians_per_1000": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "physicians_per_1000"
+  ],
+  "ext__sex_ratio": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "sex_ratio"
+  ],
+  "ext__fiscal_independence": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "fiscal_independence"
+  ],
+  "ext__pop80_share": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "pop80_share"
+  ],
+  "ext__cpr_awareness_rate": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "cpr_awareness_rate"
+  ],
+  "ext__fires_per_10000": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "fires_per_10000"
+  ],
+  "ext__ill_defined_share": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "ill_defined_share"
+  ],
+  "ext__living_alone_elderly": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "living_alone_elderly"
+  ],
+  "ext__all_crash_per1000": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "all_crash_per1000"
+  ],
+  "ext__em_specialists_per100k": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "em_specialists_per100k"
+  ],
+  "ext__drink_drive_crash_share": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "drink_drive_crash_share"
+  ],
+  "ext__cars_per_capita": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "cars_per_capita"
+  ],
+  "ext__road_pavement_rate": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "road_pavement_rate"
+  ],
+  "ext__traffic_culture_index": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "traffic_culture_index"
+  ],
+  "ext__seatbelt_rate": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "seatbelt_rate"
+  ],
+  "ext__drink_driving_rate": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "drink_driving_rate"
+  ],
+  "ext__basic_livelihood_rate": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "basic_livelihood_rate"
+  ],
+  "ext__tertiary_educated_share": [
+   "EXT_canonical_pool_ELTI_261119.csv",
+   "tertiary_educated_share"
+  ],
+  "ext__elti_cases": [
+   "ELTI_E69.csv",
+   "cases"
+  ],
+  "ext__pop65": [
+   "ELTI_E69.csv",
+   "pop65"
+  ]
+ }
+}
