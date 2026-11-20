@@ -8,9 +8,9 @@ S43 = lambda a, v: N["s43"][(a, v)]
 S41 = lambda a, v: N["s41"][(a, v)]
 SEN = lambda s, v: N["sens"][s][v]
 KH = ("KH_typeI", "KH_typeII", "KH_typeIII", "KH_typeIV"); BEST_KH = min(KH, key=lambda a: N["s43_waic"][a])
-TITLE = "Per older resident or per crash? How the choice of denominator reshapes district rankings of road injury among older people in Korea"
-assert ":" not in TITLE
-KEYWORDS = ["Older road users", "Road traffic injury", "Exposure denominator", "Small-area analysis", "Police crash data", "Traffic safety culture", "Korea"]
+TITLE = "Per older resident or per crash? How the denominator reshapes district rankings of road injury among older people in Korea"
+assert ":" not in TITLE and len(TITLE.split()) <= 20
+KEYWORDS = ["Older road users", "Road traffic injury", "Exposure denominator", "Small-area analysis", "Police crash data", "Traffic safety culture"]
 SUP = {"methods": "Appendix A", "covariates": "Table A1", "lik": "Table A2", "specs": "Table A3", "hot": "Table A4"}
 sup = lambda k: SUP[k]
 import pandas as _pd, os as _os

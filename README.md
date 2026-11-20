@@ -2,7 +2,7 @@
 
 Analysis code for a manuscript on injured road users aged 65 years or older in police-reported road traffic crashes, counted by the district of crash occurrence, across 229 districts of the Republic of Korea, 2011-2024 (national series to 2025).
 
-Archived version: Zenodo, https://doi.org/10.5281/zenodo.24391037 (v1.0.1).
+Archived version: Zenodo, https://doi.org/10.5281/zenodo.24391308 (v1.0.2).
 
 ## Contents
 
