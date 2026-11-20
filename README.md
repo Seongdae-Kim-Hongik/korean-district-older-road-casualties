@@ -2,7 +2,7 @@
 
 Analysis code for a manuscript on injured road users aged 65 years or older in police-reported road traffic crashes, counted by the district of crash occurrence, across 229 districts of the Republic of Korea, 2011-2024 (national series to 2025).
 
-Archived version: Zenodo, https://doi.org/10.5281/zenodo.24360636 (v1.0.0).
+Archived version: Zenodo, https://doi.org/10.5281/zenodo.24391037 (v1.0.1).
 
 ## Contents
 
@@ -40,7 +40,7 @@ Run from the repository root (set `ST_DATA_ROOT` and `ST_GPT_DATASET` to the loc
 | 5 | `81_fit_inla.R ELTI` (`ST_VER=std3`, `ST_GRAPH=04_분석/ELTI/graph_593.graph`, `ST_THREADS=1`; wrapped in `rslot.sh`) | Principal model, set comparison, 200-subset multiverse, window models, expected-count sensitivity |
 | 6 | `85_window_maps.R`, `86_yearly_maps_ehsa.py`, `86b_ehsa_modified_mk.py`, `87_window_grid.py` | Maps, yearly smoothed ratios, persistence and emerging hot spot analysis |
 | 7 | `88g_sens_prep.py ELTI std3`, `88g_sens_suite.R` (`GROUP=1..6`), `88h_ppc_varpart.R`, `88k_struct_kh.R` (nb, struct, kh, review, conf) with `kh_constraints.R`, `89g_sens_combine.py` | Sensitivity analyses, Knorr-Held models, Spatial+ and restricted spatial regression |
-| 8 | `04_분석/ELTI/MS/build/` (`build_refs_elti.py`, `figs_elti.py`, `build_jsr_elti.py`, `appendix_elti.py`, `check_elti.py`; `run_all_elti.sh`) | Manuscript, appendix, figures and checks |
+| 8 | `04_분석/ELTI/MS/build/` (`build_refs_elti.py`, `figs_elti.py`, `build_manuscript_elti.py`, `appendix_elti.py`; `run_all_elti.sh`) | Manuscript, appendix, figures and checks |
 
 The boundary file is found at `data/boundary/final.shp` by default; set `ST_SHP` to use another path.
 

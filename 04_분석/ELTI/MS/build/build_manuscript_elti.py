@@ -1,14 +1,13 @@
-# build_jsr_elti.py — ELTI 투고 원고 조립(Journal of Safety Research, Research Article, 2026-11-19).
-#  JSR 규정(Guide for authors 원문 11/19 확인, MS/00_저널가이드/JSR_규정_261119.md): 이중 익명(제목면 별도: 제목·저자·소속·교신 주소·이메일·감사·Declaration of interest; 익명 원고에 식별 정보 없음),
-#   초록 ≤300단어 소제목 Introduction/Method/Results/Conclusions/Practical Applications, 키워드 ≥5(제목 단어 반복 금지), 본문 끝 Practical applications 절,
-#   그림·표는 관련 본문 옆·캡션 바로 아래, APA 참고문헌(알파벳순·전 저자, 본문 저자-연도·괄호 안 &), AI 고지 절은 참고문헌 앞.
+# build_manuscript_elti.py — ELTI 투고 원고 조립(the journal, Research paper, 2026-11-20).
+#  the journal 규정(Guide for authors 원문 11/20 확인): 이중 익명(제목면 별도), 3000–6000단어, 초록 ≤250 비구조, 키워드 1–7, 하이라이트 3–5개 ≤85자(별도 파일),
+#   'accident' 단어 금지(인용 문헌 제목만 예외), 약어 최소화, 수가 아닌 비율, Elsevier Harvard 참고문헌(본문 저자-연도, 두 저자 'and', 목록 알파벳순, LTWA 약어).
 import os, re, json, subprocess
 from docx.shared import Pt, Mm
 from jkms_engine import JKMS
 import content_elti as C
 HERE = os.path.dirname(os.path.abspath(__file__)); MS = os.path.dirname(HERE); OUT = os.path.join(MS, "out"); os.makedirs(OUT, exist_ok=True)
 N = C.N; REFS = json.load(open(os.path.join(HERE, "refs_elti.json"), encoding="utf-8"))
-DRAFT = os.path.join(MS, "draft", "01_manuscript.md")
+DRAFT = os.path.join(MS, "draft", "02_manuscript.md")
 _zf = os.path.join(OUT, "zenodo_doi.txt"); ZENODO = open(_zf).read().strip() if os.path.exists(_zf) else "[ZENODO DOI]"
 TITLE = C.TITLE; ORCID = "0000-0002-1525-0091"
 AFFIL = "Department of Biohealth Convergence Open Sharing System, Hongik University, 94 Wausan-ro, Mapo-gu, Seoul 04066, Republic of Korea"
@@ -42,7 +41,7 @@ def all_keys():
     return sorted(k for k in {k.strip().lstrip("@") for g in re.findall(r"\[(@[^\]]+)\]", src) for k in g.split(";")} if re.fullmatch(r"(web:)?[a-z][a-z0-9]*", k))
 KEYS = all_keys(); _miss = [k for k in KEYS if k not in REFS]; assert not _miss, _miss
 
-# ── APA(MCRR 빌더 이식) ──
+# ── 저자-연도 라벨(Elsevier Harvard) ──
 KEEP = {"Korea", "Korean", "Seoul", "Japan", "Japanese", "Sydney", "Auckland", "Wisconsin", "Chicago", "Toronto", "Balearic", "Islands", "Corfu", "Sweden", "Swedish", "Norway", "Daegu", "Victoria", "Australia", "Canada",
         "British", "Columbia", "New", "Zealand", "United", "States", "U.S.", "COVID-19", "Bayesian", "Laplace", "Spatial+", "Besag", "STROBE", "Moran", "I", "Global", "Burden", "Disease", "Study", "R", "Yoon's", "Act", "England", "Taiwan", "DRIVE", "OECD", "WHO"}
 def sent(t):
@@ -80,40 +79,50 @@ def surnames(k):
     au = REFS[k]["authors"]
     return [au] if isinstance(au, str) else [person(a)[0] for a in au]
 def base_label(k):
-    s = surnames(k); return (s[0] if len(s) == 1 else f"{s[0]} & {s[1]}" if len(s) == 2 else f"{s[0]} et al."), REFS[k]["year"]
+    s = surnames(k); return (s[0] if len(s) == 1 else f"{s[0]} and {s[1]}" if len(s) == 2 else f"{s[0]} et al."), REFS[k]["year"]
 _lab = {}
 for k in KEYS: _lab.setdefault(base_label(k), []).append(k)
 SUFFIX = {}; LAB2 = {}
 for (_a, _y), ks in _lab.items():
     if len(ks) > 1:
         if len({surnames(k)[0] for k in ks}) == 1 and len({tuple(surnames(k)[:2]) for k in ks}) == len(ks):
-            for k in ks: s_ = surnames(k); LAB2[k] = f"{s_[0]}, {s_[1]}, et al." if len(s_) > 2 else f"{s_[0]} & {s_[1]}"
+            for k in ks: s_ = surnames(k); LAB2[k] = f"{s_[0]}, {s_[1]}, et al." if len(s_) > 2 else f"{s_[0]} and {s_[1]}"
         else:
             for i, k in enumerate(sorted(ks, key=lambda x: REFS[x]["title"].lower())): SUFFIX[k] = "abcdefgh"[i]
 def year(k): return f"{REFS[k]['year']}{SUFFIX.get(k, '')}"
 def aylabel(k):
     a = LAB2.get(k) or base_label(k)[0]; return ((a.lower(), year(k)), f"{a}, {year(k)}")
+def ini(i): return i.replace(" ", "")
 def apa_authors(k):
     au = REFS[k]["authors"]
     if isinstance(au, str): return au
-    ps = [f"{s}, {i}" if i else s for s, i in (person(a) for a in au)]
-    if len(ps) == 1: return ps[0]
-    if len(ps) <= 20: return ", ".join(ps[:-1]) + ", & " + ps[-1]
-    return ", ".join(ps[:19]) + ", . . . " + ps[-1]
+    return ", ".join(f"{s}, {ini(i)}" if i else s for s, i in (person(a) for a in au))
 def full_pages(p):
     m = re.fullmatch(r"([A-Za-z]?)(\d+)-([A-Za-z]?)(\d+)", p or "")
     if not m: return p
     a, b = m.group(2), m.group(4)
     if len(b) < len(a): b = a[:len(a) - len(b)] + b
     return f"{m.group(1)}{a}-{m.group(3)}{b}"
+JAB = {"Annals of the Institute of Statistical Mathematics": "Ann. Inst. Stat. Math.", "Annual review of public health": "Annu. Rev. Public Health", "Annual Review of Public Health": "Annu. Rev. Public Health",
+       "Journal of the Royal Statistical Society Series B: Statistical Methodology": "J. R. Stat. Soc. Ser. B Stat. Methodol.", "Statistical Science": "Stat. Sci.",
+       "Statistical methods in medical research": "Stat. Methods Med. Res.", "Statistics in medicine": "Stat. Med.", "Asia Pac J Public Health": "Asia Pac. J. Public Health"}
+def jabbr(k):
+    r = REFS[k]
+    if (r.get("journal") or "") in JAB: return JAB[r["journal"]]
+    a = r.get("journal") or jname(k); full = {w.strip(",;:.()").lower() for w in (r.get("journal_full") or jname(k)).replace("&", " ").replace("-", " ").split()}
+    out = []
+    for w in a.split():
+        lw = w.lower().strip(".")
+        out.append(w if (lw in full or (w.isupper() and len(w) > 1) or w.endswith(".")) else w + ".")
+    return " ".join(out)
 def aref(k):
-    r = REFS[k]; A = apa_authors(k); A = A if A.endswith(".") else A + "."
-    if r["type"] == "web": return f"{A} ({year(k)}). <i>{r['title']}</i>. {r['url']} (accessed {r.get('accessed', '')})."
-    if r["type"] == "book": return f"{A} ({year(k)}). <i>{sent(r['title'])}</i>. {r.get('publisher', '')}." + (f" https://doi.org/{r['doi']}" if r.get("doi") else "")
+    r = REFS[k]; A = apa_authors(k)
+    if r["type"] == "web": return f"{A}, {year(k)}. {r['title']}. {r['url']} (accessed {r.get('accessed', '')})."
+    if r["type"] == "book": return f"{A}, {year(k)}. {sent(r['title'])}. {r.get('publisher', '')}." + (f" https://doi.org/{r['doi']}." if r.get("doi") else "")
     t = sent(r["title"].rstrip(".")); t = t + ("" if t.endswith(("?", "!")) else ".")
-    s = f"{A} ({year(k)}). {t} <i>{jname(k)}</i>"
-    if r.get("vol"): s += f", <i>{r['vol']}</i>" + (f"({r['issue']})" if r.get("issue") else "") + (f", {full_pages(r['pages']).replace('-', chr(8211))}" if r.get("pages") else "")
-    return s + "." + (f" https://doi.org/{r['doi']}" if r.get("doi") else "")
+    s = f"{A}, {year(k)}. {t} {jabbr(k)}"
+    if r.get("vol"): s += f" {r['vol']}" + (f", {full_pages(r['pages']).replace('-', chr(8211))}" if r.get("pages") else "")
+    return s + "." + (f" https://doi.org/{r['doi']}." if r.get("doi") else "")
 def sortkey(k):
     au = REFS[k]["authors"]; s = [(au.lower(), "")] if isinstance(au, str) else [(person(a)[0].lower(), person(a)[1].lower()) for a in au]
     return (s, year(k))
@@ -147,8 +156,7 @@ def build(bw=0, aw=0):
     J.para(f"<b>{TITLE}</b>")
     J.para(f"<b>Word count:</b> {bw} (main text, excluding abstract, tables, figure captions and references); abstract {aw}. <b>Tables:</b> 2. <b>Figures:</b> 3. <b>References:</b> {len(KEYS)}.", before=6)
     J.page_break(); J.head("Abstract", 1)
-    for p in D["Abstract"]:
-        m = re.match(r"^(Introduction|Method|Results|Conclusions|Practical Applications):\s*(.*)$", p, re.S); assert m, p[:40]; J.para(f"<b>{m.group(1)}:</b> {m.group(2)}")
+    for p in D["Abstract"]: J.para(p)
     J.para(f"<b>Keywords:</b> {'; '.join(C.KEYWORDS)}", before=6)
     J.page_break(); J.counting = True
     J.head("1. Introduction", 1)
@@ -167,10 +175,10 @@ def build(bw=0, aw=0):
     for p in D["Discussion"]:
         if p.startswith("### "): J.head(p[4:].strip(), 2); continue
         J.para(cites(p), indent=True)
-    J.head("5. Conclusions", 1)
+    J.head("5. Implications for policy and practice", 1)
+    for p in D["Implications for policy and practice"]: J.para(cites(p), indent=True)
+    J.head("6. Conclusions", 1)
     for p in D["Conclusions"]: J.para(cites(p), indent=True)
-    J.head("6. Practical applications", 1)
-    for p in D["Practical applications"]: J.para(cites(p), indent=True)
     J.counting = False
     J.head("Data availability", 1); J.para(DATA_ANON)
     J.head(AI_HEAD, 1); J.para(AI_STATEMENT)
@@ -187,12 +195,12 @@ def docx_bw(path):
 
 if __name__ == "__main__":
     p = os.path.join(OUT, "Manuscript_anonymized.docx"); D = read_draft()
-    AB = [re.sub(r"^(Introduction|Method|Results|Conclusions|Practical Applications):\s*", "", x) for x in D["Abstract"]]; aw = sum(len(x.split()) for x in AB)
+    aw = sum(len(x.split()) for x in D["Abstract"])
     J, rl, D = build(); J.doc_title = ""; J.save(p); bw = docx_bw(p)
     J, rl, D = build(bw, aw); J.doc_title = ""; J.save(p); assert docx_bw(p) == bw
     T = title_page(); T.doc_title = ""; T.save(os.path.join(OUT, "Title_page.docx"))
     for f in ("Manuscript_anonymized.docx", "Title_page.docx"):
-        subprocess.run(["/opt/homebrew/bin/soffice", "--headless", "-env:UserInstallation=file:///tmp/lo_elti_jsr", "--convert-to", "pdf", "--outdir", OUT, os.path.join(OUT, f)], check=True, capture_output=True)
+        subprocess.run(["/opt/homebrew/bin/soffice", "--headless", "-env:UserInstallation=file:///tmp/lo_elti", "--convert-to", "pdf", "--outdir", OUT, os.path.join(OUT, f)], check=True, capture_output=True)
     open(os.path.join(OUT, "wordcount.txt"), "w").write(f"body_words={bw}\nabstract_words={aw}\nrefs={len(KEYS)}\ntables=2\nfigures=3\n")
     open(os.path.join(OUT, "reference_list.txt"), "w").write("\n".join(rl) + "\n")
-    print(f"body {bw} | abstract {aw} | refs {len(KEYS)}"); assert aw <= 300, aw
+    print(f"body {bw} | abstract {aw} | refs {len(KEYS)}"); assert aw <= 250, aw; assert 3000 <= bw <= 6000, bw

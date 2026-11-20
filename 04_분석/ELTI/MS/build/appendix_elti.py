@@ -1,4 +1,4 @@
-# appendix_elti.py — ELTI Appendix A(Supplementary material, JSR). 수치는 numbers_elti에서만. 익명(저자 정보 없음).
+# appendix_elti.py — ELTI Appendix A(Supplementary material). 수치는 numbers_elti에서만. 익명(저자 정보 없음).
 #  Table A1 변수 출처·단위·연도·예상 방향 · Table A2 우도 5종 · Table A3 대안 사양별 RR(가설 7) · Table A4 잔차 핫·콜드스팟 목록
 import os, json, re, subprocess, unicodedata
 import pandas as pd
@@ -66,7 +66,7 @@ def tA4():
 
 if __name__ == "__main__":
     J = C.__dict__.get("TX", None)
-    from build_jsr_elti import TX
+    from build_manuscript_elti import TX
     J = TX(cite="ay"); J.para("<b>Appendix A. Supplementary material</b>"); J.para(f"<b>{C.TITLE}</b>", before=6)
     J.head("A.1 Data processing", 2)
     J.para("Counts were rebuilt from the public KOSIS tables by administrative code. General wards (gu) of cities were summed to the city; the Sejong City row was used from 2012, Yeongi County (2011–2012) was assigned to Sejong City, Cheongwon County to Cheongju City (2011–2013), and Gunwi County, transferred to Daegu in 2023, was kept as one district throughout. The district counts of injured people, crashes and deaths and the population aged 65 years or older summed exactly to the national totals in each year from 2011 to 2025, and no district-year was missing. By construction, expected counts summed to the observed counts in each year.")
@@ -79,4 +79,4 @@ if __name__ == "__main__":
     J.page_break(); put_table(J, (t[0] + " (part 2)", [h[0]] + h[5:], [[x[0]] + x[5:] for x in r], t[3]), fs=8)
     J.new_page("portrait"); put_table(J, tA4(), fs=8)
     p = os.path.join(OUT, "Supplementary_Material_Appendix_A.docx"); J.doc_title = ""; J.save(p)
-    subprocess.run(["/opt/homebrew/bin/soffice", "--headless", "-env:UserInstallation=file:///tmp/lo_elti_jsr", "--convert-to", "pdf", "--outdir", OUT, p], check=True, capture_output=True); print("Appendix A ok")
+    subprocess.run(["/opt/homebrew/bin/soffice", "--headless", "-env:UserInstallation=file:///tmp/lo_elti", "--convert-to", "pdf", "--outdir", OUT, p], check=True, capture_output=True); print("Appendix A ok")

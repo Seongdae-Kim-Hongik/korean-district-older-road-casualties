@@ -1,4 +1,4 @@
-# content_elti.py — ELTI Materials and methods·Results 문장(수치는 numbers_elti에서만). Journal of Safety Research(이중 익명, APA 저자-연도).
+# content_elti.py — ELTI Materials and methods·Results 문장(수치는 numbers_elti에서만). the journal(이중 익명, Elsevier Harvard 저자-연도, 사고 단어 금지).
 #  단독 저자: 1인칭 금지. Results에 해석 금지. 제목에 쌍점 금지. 가설 반대 방향은 사후로 표시, 주모형 불변.
 from numbers_elti import load, HYP, FORCED, P80, CAR, PAVE, TCI, BELT, DRK, BLS, TE
 N = load(); D = N["desc"]; M = N["main"]; T1 = N["T1"]
@@ -8,9 +8,9 @@ S43 = lambda a, v: N["s43"][(a, v)]
 S41 = lambda a, v: N["s41"][(a, v)]
 SEN = lambda s, v: N["sens"][s][v]
 KH = ("KH_typeI", "KH_typeII", "KH_typeIII", "KH_typeIV"); BEST_KH = min(KH, key=lambda a: N["s43_waic"][a])
-TITLE = "Denominators change the geography of injured older road users across Korean districts"
+TITLE = "Per older resident or per crash? How the choice of denominator reshapes district rankings of road injury among older people in Korea"
 assert ":" not in TITLE
-KEYWORDS = ["aged 65 and over", "police crash data", "small-area analysis", "Bayesian spatial model", "exposure denominator", "traffic safety culture", "vehicle ownership"]
+KEYWORDS = ["Older road users", "Road traffic injury", "Exposure denominator", "Small-area analysis", "Police crash data", "Traffic safety culture", "Korea"]
 SUP = {"methods": "Appendix A", "covariates": "Table A1", "lik": "Table A2", "specs": "Table A3", "hot": "Table A4"}
 sup = lambda k: SUP[k]
 import pandas as _pd, os as _os
@@ -20,7 +20,7 @@ MAIN_WAIC = float(_pd.read_csv(_os.path.join(_os.path.dirname(_os.path.dirname(_
 METHODS = [
 ("Study design and data sources",
  f"This ecological study covered all {N['n_districts']} districts (urban wards, cities and counties) of the Republic of Korea, harmonised to 2024 boundaries, over 2011–2024 ({N['n_rows']:,} district-years), and is reported according to the STROBE statement [@vonelm2007strengthening]. "
- "Annual counts of crashes, deaths and injured people from police-reported road traffic crashes in which at least one person aged 65 years or older was killed or injured, by province and district of crash occurrence, were obtained from the local indicator tables of the national statistics portal, which publish National Police Agency records compiled through the road traffic accident analysis system [@web:kosis2026elderly]. "
+ "Annual counts of crashes, deaths and injured people from police-reported road traffic crashes in which at least one person aged 65 years or older was killed or injured, by province and district of crash occurrence, were obtained from the local indicator tables of the national statistics portal, which publish National Police Agency records compiled in the police road traffic crash analysis system [@web:kosis2026elderly]. "
  "The resident population aged 65 years or older came from resident registration in the same portal. Districts were joined across sources by administrative code only; general wards were summed to their city, Yeongi County (2011–2012) was assigned to Sejong City and Cheongwon County to Cheongju City (2011–2013) (Appendix A). "
  "The district counts summed exactly to the published national totals in every year (2011–2025), and no district-year of the outcome was missing. "
  "Only published aggregate statistics were used, and no individual could be identified. IRB_SENTENCE"),

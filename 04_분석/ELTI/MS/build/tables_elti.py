@@ -1,4 +1,4 @@
-# tables_elti.py — ELTI 본문 표 2개(수치는 numbers_elti에서만). JSR: 표는 관련 본문 옆, 제목·설명 위, 각주 아래, 숫자 3자리 이내 반올림.
+# tables_elti.py — ELTI 본문 표 2개(수치는 numbers_elti에서만). the journal: 표는 관련 본문 옆, 제목·설명 위, 각주 아래, 숫자 3자리 이내 반올림.
 from docx.shared import Pt
 from numbers_elti import HYP, FORCED, CAR, PAVE, TCI, BELT, DRK, BLS, TE, P80
 WC = ["W1_2011-15", "W2_2016-19", "W3_2020-24", "ALL"]; WH = ["2011–2015", "2016–2019", "2020–2024", "2011–2024"]
